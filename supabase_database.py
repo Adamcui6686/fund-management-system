@@ -68,6 +68,9 @@ class SupabaseManager:
         """添加新策略"""
         if start_date is None:
             start_date = datetime.now().date().isoformat()
+        elif hasattr(start_date, 'isoformat'):
+            # 如果是datetime.date对象，转换为字符串
+            start_date = start_date.isoformat()
         
         data = {
             "name": name,
@@ -91,6 +94,12 @@ class SupabaseManager:
     # 净值记录管理
     def add_nav_record(self, strategy_id: int, date: str, nav_value: float) -> bool:
         """添加净值记录"""
+        # 处理日期格式
+        if hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        elif not isinstance(date, str):
+            date = str(date)
+            
         # 计算收益率
         last_nav = self.get_last_nav(strategy_id, date)
         return_rate = None
@@ -99,7 +108,7 @@ class SupabaseManager:
         
         data = {
             "strategy_id": strategy_id,
-            "date": date if isinstance(date, str) else date.isoformat(),
+            "date": date,
             "nav_value": nav_value,
             "return_rate": return_rate
         }
