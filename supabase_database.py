@@ -19,11 +19,14 @@ class SupabaseManager:
         try:
             self.supabase_url = st.secrets["SUPABASE_URL"]
             self.supabase_key = st.secrets["SUPABASE_ANON_KEY"]
-        except KeyError:
-            # 开发环境fallback
-            self.supabase_url = "YOUR_SUPABASE_URL"
-            self.supabase_key = "YOUR_SUPABASE_KEY"
-            st.warning("⚠️ 未配置Supabase密钥，请在Streamlit Cloud中配置")
+            
+            # 验证配置是否有效
+            if not self.supabase_url or not self.supabase_key:
+                raise KeyError("配置为空")
+                
+        except (KeyError, AttributeError) as e:
+            # 如果无法获取密钥，抛出异常让应用回退到本地数据库
+            raise Exception(f"Supabase配置错误: {str(e)}")
         
         self.headers = {
             "apikey": self.supabase_key,

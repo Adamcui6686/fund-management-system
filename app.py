@@ -17,18 +17,22 @@ st.set_page_config(
 @st.cache_resource
 def init_database():
     try:
-        # 尝试使用云数据库
-        from supabase_database import SupabaseManager
-        db = SupabaseManager()
-        # 简单测试连接
-        test_strategies = db.get_strategies()
-        st.sidebar.success("🌐 已连接云数据库")
-        return db
+        # 检查是否在云端环境
+        if hasattr(st, 'secrets') and 'SUPABASE_URL' in st.secrets:
+            from supabase_database import SupabaseManager
+            db = SupabaseManager()
+            # 简单测试连接
+            test_strategies = db.get_strategies()
+            st.sidebar.success("🌐 已连接云数据库")
+            st.sidebar.caption("数据实时同步")
+            return db
+        else:
+            raise Exception("未配置云数据库")
     except Exception as e:
         # 回退到本地数据库
         from database import DatabaseManager
         st.sidebar.warning("💻 使用本地数据库")
-        st.sidebar.caption(f"云连接失败: {str(e)[:50]}...")
+        st.sidebar.caption("仅限本机访问")
         return DatabaseManager()
 
 db = init_database()
