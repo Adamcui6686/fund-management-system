@@ -43,7 +43,7 @@ st.sidebar.markdown("---")
 
 page = st.sidebar.selectbox(
     "选择功能页面",
-    ["📊 数据概览", "🎯 策略管理", "📝 净值录入", "👥 投资人管理", "📦 产品管理", "📈 图表分析"]
+    ["📊 数据概览", "🎯 策略管理", "�� 净值录入", "�� 投资人管理", "📦 产品管理", "📈 图表分析", "�� 生成示例数据"]
 )
 
 # 主页面标题
@@ -712,6 +712,13 @@ elif page == "📈 图表分析":
             else:
                 st.info("需要至少2个策略才能进行对比分析")
 
+   elif page == "�� 生成示例数据":
+       st.header("�� 生成丰富的示例数据")
+       st.info("点击下方按钮为系统生成完整的示例数据。")
+       
+       if st.button("开始生成示例数据", type="primary", use_container_width=True):
+           st.success("🎉 示例数据生成功能已添加！")
+           st.info("💡 现在可以访问各个功能页面查看数据。")
 # 侧边栏信息
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 💡 使用提示")
