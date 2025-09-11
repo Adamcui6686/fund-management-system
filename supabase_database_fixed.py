@@ -187,11 +187,15 @@ class SupabaseManager:
         """设置产品策略权重"""
         if effective_date is None:
             effective_date = datetime.now().date().isoformat()
+        elif hasattr(effective_date, 'isoformat'):
+            effective_date = effective_date.isoformat()
+        else:
+            effective_date = str(effective_date)
         
         data = {
-            "product_id": product_id,
-            "strategy_id": strategy_id,
-            "weight": weight,
+            "product_id": int(product_id),
+            "strategy_id": int(strategy_id),
+            "weight": float(weight),
             "effective_date": effective_date
         }
         
@@ -202,6 +206,10 @@ class SupabaseManager:
         """获取产品策略权重"""
         if date is None:
             date = datetime.now().date().isoformat()
+        elif hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        else:
+            date = str(date)
         
         params = {
             "product_id": f"eq.{product_id}",
@@ -229,6 +237,10 @@ class SupabaseManager:
         """添加投资记录"""
         if investment_date is None:
             investment_date = datetime.now().date().isoformat()
+        elif hasattr(investment_date, 'isoformat'):
+            investment_date = investment_date.isoformat()
+        else:
+            investment_date = str(investment_date)
         
         # 获取投资时的产品净值
         nav_at_investment = self.calculate_product_nav(product_id, investment_date)
@@ -237,12 +249,12 @@ class SupabaseManager:
         shares = amount / nav_at_investment if nav_at_investment > 0 else 0
         
         data = {
-            "investor_id": investor_id,
-            "product_id": product_id,
+            "investor_id": int(investor_id),
+            "product_id": int(product_id),
             "investment_date": investment_date,
-            "amount": amount,
-            "shares": shares,
-            "nav_at_investment": nav_at_investment,
+            "amount": float(amount),
+            "shares": float(shares),
+            "nav_at_investment": float(nav_at_investment),
             "type": investment_type
         }
         
@@ -282,6 +294,10 @@ class SupabaseManager:
         """计算产品净值"""
         if date is None:
             date = datetime.now().date().isoformat()
+        elif hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        else:
+            date = str(date)
         
         # 获取产品权重
         weights = self.get_product_weights(product_id, date)
@@ -307,6 +323,11 @@ class SupabaseManager:
     
     def get_strategy_nav_at_date(self, strategy_id: int, date: str) -> Optional[float]:
         """获取策略在指定日期的净值"""
+        if hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        else:
+            date = str(date)
+            
         params = {
             "strategy_id": f"eq.{strategy_id}",
             "date": f"lte.{date}",
@@ -359,3 +380,4 @@ class SupabaseManager:
                 })
         
         return pd.DataFrame(portfolio_data)
+
