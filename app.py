@@ -31,8 +31,8 @@ def init_database():
     except Exception as e:
         # 回退到本地数据库
         from database import DatabaseManager
-        st.sidebar.warning("💻 使用本地数据库")
-        st.sidebar.caption("仅限本机访问")
+        st.sidebar.info("💻 使用本地数据库")
+        st.sidebar.caption("数据安全存储")
         return DatabaseManager()
 
 db = init_database()
