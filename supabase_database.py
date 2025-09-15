@@ -246,20 +246,28 @@ class SupabaseManager:
         """添加投资记录"""
         if investment_date is None:
             investment_date = datetime.now().date().isoformat()
+        elif hasattr(investment_date, 'isoformat'):
+            investment_date = investment_date.isoformat()
+        else:
+            investment_date = str(investment_date)
         
         # 获取投资时的产品净值
         nav_at_investment = self.calculate_product_nav(product_id, investment_date)
+        
+        # 如果无法获取净值，使用默认值1.0
+        if nav_at_investment is None or nav_at_investment <= 0:
+            nav_at_investment = 1.0
         
         # 计算份额
         shares = amount / nav_at_investment if nav_at_investment > 0 else 0
         
         data = {
-            "investor_id": investor_id,
-            "product_id": product_id,
+            "investor_id": int(investor_id),
+            "product_id": int(product_id),
             "investment_date": investment_date,
-            "amount": amount,
-            "shares": shares,
-            "nav_at_investment": nav_at_investment,
+            "amount": float(amount),
+            "shares": float(shares),
+            "nav_at_investment": float(nav_at_investment),
             "type": investment_type
         }
         
