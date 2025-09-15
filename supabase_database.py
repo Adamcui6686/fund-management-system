@@ -61,6 +61,8 @@ class SupabaseManager:
             return pd.DataFrame()
         except Exception as e:
             st.error(f"未知错误: {str(e)}")
+            import traceback
+            st.error(f"详细错误信息: {traceback.format_exc()}")
             return pd.DataFrame()
     
     # 策略管理
