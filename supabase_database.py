@@ -116,10 +116,8 @@ class SupabaseManager:
             "return_rate": float(return_rate) if return_rate is not None else None
         }
         
-        # 使用upsert避免重复数据
-        endpoint = "nav_records"
-        params = {"on_conflict": "strategy_id,date"}
-        result = self._make_request("POST", endpoint, data)
+        # 直接添加记录
+        result = self._make_request("POST", "nav_records", data)
         return not result.empty
     
     def get_last_nav(self, strategy_id: int, before_date: str) -> Optional[float]:
