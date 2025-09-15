@@ -307,6 +307,10 @@ class SupabaseManager:
         """计算产品净值"""
         if date is None:
             date = datetime.now().date().isoformat()
+        elif hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        else:
+            date = str(date)
         
         # 获取产品权重
         weights = self.get_product_weights(product_id, date)
