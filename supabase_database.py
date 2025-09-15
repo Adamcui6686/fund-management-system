@@ -194,11 +194,10 @@ class SupabaseManager:
         else:
             effective_date = str(effective_date)
         
-        # 先删除该产品和策略的旧权重配置
+        # 先删除该产品和策略的所有旧权重配置
         delete_params = {
             "product_id": f"eq.{product_id}",
-            "strategy_id": f"eq.{strategy_id}",
-            "effective_date": f"eq.{effective_date}"
+            "strategy_id": f"eq.{strategy_id}"
         }
         
         try:
