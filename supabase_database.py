@@ -219,6 +219,10 @@ class SupabaseManager:
         """获取产品策略权重"""
         if date is None:
             date = datetime.now().date().isoformat()
+        elif hasattr(date, 'isoformat'):
+            date = date.isoformat()
+        else:
+            date = str(date)
         
         params = {
             "product_id": f"eq.{product_id}",
