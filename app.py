@@ -485,14 +485,21 @@ elif page == "📦 产品管理":
                 weight_inputs = {}
                 total_weight = 0
                 
+                # 获取当前产品的权重配置作为默认值
+                current_weights_dict = {}
+                if not current_weights.empty:
+                    current_weights_dict = {row['strategy_id']: row['weight'] * 100 for _, row in current_weights.iterrows()}
+                
                 for _, strategy in strategies.iterrows():
+                    # 使用产品ID和策略ID组合的key，并设置当前权重作为默认值
+                    default_weight = current_weights_dict.get(strategy['id'], 0.0)
                     weight = st.number_input(
                         f"{strategy['name']}", 
-                        value=0.0, 
+                        value=default_weight, 
                         min_value=0.0, 
                         max_value=100.0, 
                         step=0.1,
-                        key=f"weight_{strategy['id']}"
+                        key=f"weight_{product_id}_{strategy['id']}"
                     )
                     weight_inputs[strategy['id']] = weight
                     total_weight += weight

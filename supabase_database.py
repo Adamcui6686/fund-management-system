@@ -187,11 +187,28 @@ class SupabaseManager:
         """设置产品策略权重"""
         if effective_date is None:
             effective_date = datetime.now().date().isoformat()
+        elif hasattr(effective_date, 'isoformat'):
+            effective_date = effective_date.isoformat()
+        else:
+            effective_date = str(effective_date)
         
+        # 先删除该产品和策略的旧权重配置
+        delete_params = {
+            "product_id": f"eq.{product_id}",
+            "strategy_id": f"eq.{strategy_id}",
+            "effective_date": f"eq.{effective_date}"
+        }
+        
+        try:
+            self._make_request("DELETE", "product_strategy_weights", params=delete_params)
+        except:
+            pass  # 忽略删除失败的情况
+        
+        # 添加新的权重配置
         data = {
-            "product_id": product_id,
-            "strategy_id": strategy_id,
-            "weight": weight,
+            "product_id": int(product_id),
+            "strategy_id": int(strategy_id),
+            "weight": float(weight),
             "effective_date": effective_date
         }
         
