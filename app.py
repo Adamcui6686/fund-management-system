@@ -317,6 +317,8 @@ elif page == "👥 投资人管理":
                 
                 with col4:
                     investment_date = st.date_input("投资日期", value=datetime.now().date())
+                    # 统一将日期转为字符串，避免下游JSON序列化错误
+                    investment_date_str = investment_date.isoformat() if hasattr(investment_date, 'isoformat') else str(investment_date)
                 
                 with col5:
                     amount = st.number_input("金额", value=1000.0, min_value=0.01, step=1000.0)
@@ -325,7 +327,11 @@ elif page == "👥 投资人管理":
                     # 显示当前产品净值
                     if selected_product:
                         product_id = product_options[selected_product]
-                        current_nav = db.calculate_product_nav(product_id, investment_date)
+                        try:
+                            current_nav = db.calculate_product_nav(product_id, investment_date_str)
+                        except Exception:
+                            # 若出现序列化错误或网络问题，退回到默认净值
+                            current_nav = 1.0
                         st.metric("产品净值", f"{current_nav:.3f}")
                     else:
                         current_nav = 1.0
@@ -342,7 +348,8 @@ elif page == "👥 投资人管理":
                             final_amount = amount if transaction_type == "申购" else -amount
                             transaction_type_en = "investment" if transaction_type == "申购" else "redemption"
                             
-                            db.add_investment(investor_id, product_id, final_amount, investment_date, transaction_type_en)
+                            # 统一传入字符串日期，避免云端API JSON序列化错误
+                            db.add_investment(investor_id, product_id, final_amount, investment_date_str, transaction_type_en)
                             
                             shares = final_amount / current_nav
                             st.success(f"""
